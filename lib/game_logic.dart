@@ -1,0 +1,74 @@
+import 'package:flutter/widgets.dart';
+import 'package:playing_cards/playing_cards.dart';
+
+class UpdatedCard extends PlayingCard {
+  UpdatedCard(super.suit, super.value);
+
+  PlayingCardView showCard({showCardBack = false}) {
+    return PlayingCardView(
+      card: PlayingCard(suit, value),
+      showBack: showCardBack,
+      elevation: 3.0,
+    );
+  }
+
+  int cardValue() {
+    switch (value) {
+      case CardValue.ace:
+        return 1;
+      case CardValue.two:
+        return 2;
+      case CardValue.three:
+        return 3;
+      case CardValue.four:
+        return 4;
+      case CardValue.five:
+        return 5;
+      case CardValue.six:
+        return 6;
+      case CardValue.seven:
+        return 7;
+      case CardValue.eight:
+        return 8;
+      case CardValue.nine:
+        return 9;
+      case CardValue.ten:
+        return 10;
+      case CardValue.jack:
+        return 10;
+      case CardValue.queen:
+        return 10;
+      case CardValue.king:
+        return 10;
+      default:
+        return 0;
+    }
+  }
+}
+
+class GameLogic {
+  final List<UpdatedCard> deck = [];
+
+  void makeDeck() {
+    for (var suit in Suit.values) {
+      for (var value in CardValue.values) {
+        deck.add(UpdatedCard(suit, value));
+      }
+    }
+    deck.removeWhere(
+      (card) =>
+          card.value == CardValue.joker_1 || card.value == CardValue.joker_2,
+    );
+    print(deck.length);
+  }
+
+  List<Widget> displayDeck() {
+    List<Widget> fullDeck = [];
+    for (var card in deck) {
+      fullDeck.add(SizedBox(height: 100, width: 100, child: card.showCard()));
+    }
+    return fullDeck;
+  }
+}
+
+final GameLogic gameLogic = GameLogic();
