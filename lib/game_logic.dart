@@ -57,9 +57,15 @@ class GameLogic {
     }
     deck.removeWhere(
       (card) =>
-          card.value == CardValue.joker_1 || card.value == CardValue.joker_2,
+          card.value == CardValue.joker_1 ||
+          card.value == CardValue.joker_2 ||
+          card.suit == Suit.joker,
     );
-    print(deck.length);
+    shuffleDeck();
+  }
+
+  void shuffleDeck() {
+    deck.shuffle();
   }
 
   List<Widget> displayDeck() {
