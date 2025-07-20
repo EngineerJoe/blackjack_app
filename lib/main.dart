@@ -3,8 +3,6 @@ import 'package:playing_cards/playing_cards.dart';
 import 'game_logic.dart';
 
 void main() {
-  gameLogic.makeDeck();
-
   runApp(const MyApp());
 }
 
@@ -24,7 +22,9 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Text(gameLogic.dealerTotal.toString()),
               CardHand(cards: gameLogic.dealersCards),
+              Text(gameLogic.playerTotal.toString()),
               CardHand(cards: gameLogic.playersCards),
               Row(
                 children: [
@@ -43,6 +43,14 @@ class _MyAppState extends State<MyApp> {
                       });
                     },
                     child: Text('Draw Card'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        gameLogic.dealerTurn();
+                      });
+                    },
+                    child: Text('Stay'),
                   ),
                 ],
               ),
