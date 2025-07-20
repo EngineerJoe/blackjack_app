@@ -48,6 +48,8 @@ class UpdatedCard extends PlayingCard {
 
 class GameLogic {
   final List<UpdatedCard> deck = [];
+  final List<UpdatedCard> playersCards = [];
+  final List<UpdatedCard> dealersCards = [];
 
   void makeDeck() {
     for (var suit in Suit.values) {
@@ -74,6 +76,18 @@ class GameLogic {
       fullDeck.add(SizedBox(height: 100, width: 100, child: card.showCard()));
     }
     return fullDeck;
+  }
+
+  UpdatedCard drawCard() {
+    return deck.removeAt(0);
+  }
+
+  void dealplayerCard() {
+    playersCards.add(drawCard());
+  }
+
+  void setupGame() {
+    dealplayerCard();
   }
 }
 
