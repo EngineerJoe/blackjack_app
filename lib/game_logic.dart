@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:playing_cards/playing_cards.dart';
 
@@ -100,6 +102,8 @@ class GameLogic {
     dealPlayerCard();
     dealDealerCard();
   }
+
+  int getTotal() {}
 }
 
 final GameLogic gameLogic = GameLogic();
