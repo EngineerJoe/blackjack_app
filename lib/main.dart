@@ -26,13 +26,25 @@ class _MyAppState extends State<MyApp> {
             children: [
               CardHand(cards: gameLogic.dealersCards),
               CardHand(cards: gameLogic.playersCards),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    gameLogic.dealplayerCard();
-                  });
-                },
-                child: Text('DealCard'),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        gameLogic.setupGame();
+                      });
+                    },
+                    child: Text('Setup Game'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        gameLogic.dealPlayerCard();
+                      });
+                    },
+                    child: Text('Draw Card'),
+                  ),
+                ],
               ),
             ],
           ),

@@ -3,11 +3,12 @@ import 'package:playing_cards/playing_cards.dart';
 
 class UpdatedCard extends PlayingCard {
   UpdatedCard(super.suit, super.value);
+  bool isFaceDown = false;
 
-  PlayingCardView showCard({showCardBack = false}) {
+  PlayingCardView showCard() {
     return PlayingCardView(
       card: PlayingCard(suit, value),
-      showBack: showCardBack,
+      showBack: isFaceDown,
       elevation: 3.0,
     );
   }
@@ -79,15 +80,25 @@ class GameLogic {
   }
 
   UpdatedCard drawCard() {
-    return deck.removeAt(0);
+    var card = deck.removeAt(0);
+    return card;
   }
 
-  void dealplayerCard() {
-    playersCards.add(drawCard());
+  void dealPlayerCard() {
+    playersCards.insert(0, drawCard());
+  }
+
+  void dealDealerCard({bool isFaceDown = false}) {
+    var card = drawCard();
+    card.isFaceDown = isFaceDown;
+    dealersCards.insert(0, card);
   }
 
   void setupGame() {
-    dealplayerCard();
+    dealPlayerCard();
+    dealDealerCard(isFaceDown: true);
+    dealPlayerCard();
+    dealDealerCard();
   }
 }
 
