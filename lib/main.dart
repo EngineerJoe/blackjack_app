@@ -41,6 +41,13 @@ class _MyAppState extends State<MyApp> {
                       setState(() {
                         gameLogic.dealPlayerCard();
                       });
+                      final snackBar = SnackBar(
+                        content: const Text('Yay! A SnackBar!'),
+                        duration: Duration(seconds: 3),
+                      );
+                      ScaffoldMessenger.of(
+                        _MyAppState().context,
+                      ).showSnackBar(snackBar);
                     },
                     child: Text('Draw Card'),
                   ),

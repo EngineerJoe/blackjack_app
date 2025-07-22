@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:playing_cards/playing_cards.dart';
 
@@ -142,6 +143,15 @@ class GameLogic {
     while (dealerTotal < 17) {
       dealDealerCard();
     }
+  }
+
+  void checkWinner() {
+    if (playerTotal > 21) {
+      print('YOU LOSE');
+    } else if (playerTotal > dealerTotal) {
+      print('YOU WIN');
+    } else
+      (print('YOU LOSE'));
   }
 }
 
