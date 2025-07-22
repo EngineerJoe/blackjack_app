@@ -145,13 +145,26 @@ class GameLogic {
     }
   }
 
-  void checkWinner() {
+  bool didPlayerWin() {
+    if (playerTotal > dealerTotal || isDealerBust()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool isPlayerBust() {
     if (playerTotal > 21) {
-      print('YOU LOSE');
-    } else if (playerTotal > dealerTotal) {
-      print('YOU WIN');
-    } else
-      (print('YOU LOSE'));
+      return true;
+    }
+    return false;
+  }
+
+  bool isDealerBust() {
+    if (dealerTotal > 21) {
+      return true;
+    }
+    return false;
   }
 }
 
