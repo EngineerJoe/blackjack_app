@@ -27,89 +27,146 @@ class _HomePageState extends State<HomePage> {
   bool gameActive = false;
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      appBar: AppBar(
+        title: Column(
           children: [
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  gameLogic.setupGame();
-                  gameActive = true;
-                });
-              },
-              child: Text('Setup Game'),
+            Text(
+              'Blackjack',
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
-            ElevatedButton(
-              onPressed: gameLogic.isPlayerBust() || !gameActive
-                  ? null
-                  : () {
-                      setState(() {
-                        gameLogic.dealPlayerCard();
-                        if (gameLogic.isPlayerBust()) {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return SizedBox(
-                                height: 150,
-                                width: double.infinity,
-                                child: Center(
-                                  child: Text(
-                                    'Bust!',
-                                    style: TextStyle(fontSize: 40),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      });
-                    },
-              child: Text('Draw Card'),
+            Padding(padding: EdgeInsetsGeometry.symmetric(vertical: 1)),
+            Text('Bank: £' + gameLogic.bank.toString()),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        height: 130,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  child: CustomChip(chipColor: Colors.grey, chipValue: 1),
+                  onTap: () => {
+                    if (!gameActive) {setState(() => gameLogic.addToPot(1))},
+                  },
+                ),
+                GestureDetector(
+                  child: CustomChip(chipColor: Colors.red, chipValue: 2),
+                  onTap: () => {
+                    if (!gameActive) {setState(() => gameLogic.addToPot(2))},
+                  },
+                ),
+                GestureDetector(
+                  child: CustomChip(chipColor: Colors.purple, chipValue: 5),
+                  onTap: () => {
+                    if (!gameActive) {setState(() => gameLogic.addToPot(5))},
+                  },
+                ),
+                GestureDetector(
+                  child: CustomChip(chipColor: Colors.blue, chipValue: 10),
+                  onTap: () => {
+                    if (!gameActive) {setState(() => gameLogic.addToPot(10))},
+                  },
+                ),
+                GestureDetector(
+                  child: CustomChip(chipColor: Colors.black, chipValue: 20),
+                  onTap: () => {
+                    if (!gameActive) {setState(() => gameLogic.addToPot(20))},
+                  },
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: gameLogic.isPlayerBust() || !gameActive
-                  ? null
-                  : () {
-                      gameActive = false;
-                      setState(() {
-                        gameLogic.dealerTurn();
-                        if (gameLogic.didPlayerWin()) {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return SizedBox(
-                                height: 150,
-                                width: double.infinity,
-                                child: Center(
-                                  child: Text(
-                                    'You WIN!',
-                                    style: TextStyle(fontSize: 40),
-                                  ),
-                                ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: gameLogic.potEmpty() || gameActive
+                      ? null
+                      : () {
+                          setState(() {
+                            gameLogic.setupGame();
+                            gameActive = true;
+                          });
+                        },
+                  child: Text('Draw'),
+                ),
+                ElevatedButton(
+                  onPressed: gameLogic.isPlayerBust() || !gameActive
+                      ? null
+                      : () {
+                          setState(() {
+                            gameLogic.dealPlayerCard();
+                            if (gameLogic.isPlayerBust()) {
+                              gameLogic.emptyPot();
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SizedBox(
+                                    height: 150,
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: Text(
+                                        'Bust!',
+                                        style: TextStyle(fontSize: 40),
+                                      ),
+                                    ),
+                                  );
+                                },
                               );
-                            },
-                          );
-                        } else {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return SizedBox(
-                                height: 150,
-                                width: double.infinity,
-                                child: Center(
-                                  child: Text(
-                                    'You Lost',
-                                    style: TextStyle(fontSize: 40),
-                                  ),
-                                ),
+                            }
+                          });
+                        },
+                  child: Text('Draw Card'),
+                ),
+                ElevatedButton(
+                  onPressed: gameLogic.isPlayerBust() || !gameActive
+                      ? null
+                      : () {
+                          gameActive = false;
+                          setState(() {
+                            gameLogic.dealerTurn();
+                            if (gameLogic.didPlayerWin()) {
+                              gameLogic.addPotToBankX2();
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SizedBox(
+                                    height: 150,
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: Text(
+                                        'You WIN!',
+                                        style: TextStyle(fontSize: 40),
+                                      ),
+                                    ),
+                                  );
+                                },
                               );
-                            },
-                          );
-                        }
-                      });
-                    },
-              child: Text('Stay'),
+                            } else {
+                              gameLogic.emptyPot();
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SizedBox(
+                                    height: 150,
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: Text(
+                                        'You Lost',
+                                        style: TextStyle(fontSize: 40),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+                          });
+                        },
+                  child: Text('Stay'),
+                ),
+              ],
             ),
           ],
         ),
@@ -119,10 +176,67 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Text(gameLogic.dealerTotal.toString()),
+            // CardCounter(cards: gameLogic.dealerTotal.toInt().toString()),
             CardHand(cards: gameLogic.dealersCards),
-            Text(gameLogic.playerTotal.toInt().toString()),
+            CardCounter(cards: gameLogic.playerTotal.toInt().toString()),
             CardHand(cards: gameLogic.playersCards),
+            Padding(padding: EdgeInsetsGeometry.symmetric(vertical: 10)),
+            Text(
+              'Pot: £' + gameLogic.pot.toString(),
+              style: TextStyle(fontSize: 20),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class CardCounter extends StatelessWidget {
+  CardCounter({super.key, required this.cards});
+  String cards;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      margin: EdgeInsets.all(10),
+      child: Text(
+        cards,
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+class CustomChip extends StatelessWidget {
+  CustomChip({super.key, required this.chipColor, required this.chipValue});
+  Color chipColor;
+  int chipValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 5),
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(color: chipColor, shape: BoxShape.circle),
+      child: Container(
+        margin: EdgeInsets.all(6),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        child: Center(
+          child: Text(
+            chipValue.toString(),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );

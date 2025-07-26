@@ -54,6 +54,8 @@ class GameLogic {
   final List<UpdatedCard> dealersCards = [];
   double dealerTotal = 0;
   double playerTotal = 0;
+  int pot = 0;
+  int bank = 500;
 
   void makeDeck() {
     for (var suit in Suit.values) {
@@ -163,6 +165,29 @@ class GameLogic {
       return true;
     }
     return false;
+  }
+
+  void addPotToBankX2() {
+    bank += pot * 2;
+    emptyPot();
+  }
+
+  void emptyPot() {
+    pot = 0;
+  }
+
+  bool potEmpty() {
+    if (pot == 0) {
+      return true;
+    }
+    return false;
+  }
+
+  void addToPot(int amount) {
+    if (bank - amount >= 0) {
+      pot += amount;
+      bank -= amount;
+    }
   }
 }
 
