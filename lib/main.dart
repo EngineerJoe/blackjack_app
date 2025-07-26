@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:playing_cards/playing_cards.dart';
 import 'game_logic.dart';
 
+//FINISHED BLACKJACK GAME
+
 void main() {
   runApp(const MyApp());
 }
