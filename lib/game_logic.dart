@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:playing_cards/playing_cards.dart';
@@ -56,6 +58,15 @@ class GameLogic {
   double playerTotal = 0;
   int pot = 0;
   int bank = 500;
+  bool gameActive = false;
+  String gameMessage = '';
+
+  void resetGame() {
+    emptyPot();
+    bank = 500;
+    gameActive = false;
+    emptyHands();
+  }
 
   void makeDeck() {
     for (var suit in Suit.values) {
@@ -125,6 +136,7 @@ class GameLogic {
   void emptyHands() {
     playersCards.clear();
     dealersCards.clear();
+    calculateTotals();
   }
 
   void setupGame() {
@@ -137,11 +149,15 @@ class GameLogic {
   }
 
   void dealerTurn() {
+    revealDealerCards();
+    while (dealerTotal < 17 && dealerTotal < playerTotal) {
+      dealDealerCard();
+    }
+  }
+
+  void revealDealerCards() {
     for (var card in dealersCards) {
       card.isFaceDown = false;
-    }
-    while (dealerTotal < 17) {
-      dealDealerCard();
     }
   }
 
@@ -167,11 +183,6 @@ class GameLogic {
     return false;
   }
 
-  void addPotToBankX2() {
-    bank += pot * 2;
-    emptyPot();
-  }
-
   void emptyPot() {
     pot = 0;
   }
@@ -188,6 +199,55 @@ class GameLogic {
       pot += amount;
       bank -= amount;
     }
+  }
+
+  void bet() {
+    setupGame();
+    gameActive = true;
+  }
+
+  void hit() {
+    dealPlayerCard();
+    if (isPlayerBust()) {
+      gameActive = false;
+      int lostMoney = pot;
+      emptyPot();
+      gameMessage = 'Bust, you lost £' + lostMoney.toString();
+    }
+  }
+
+  void stay() {
+    gameActive = false;
+    if (isBlackjack()) {
+      int wonMoney = (pot * 1.5).toInt() + pot;
+      bank += wonMoney;
+      emptyPot();
+      gameMessage = 'BLACKJACK you won £' + wonMoney.toString();
+      return;
+    }
+    dealerTurn();
+    if (didPlayerWin()) {
+      int wonMoney = (pot * 2);
+      emptyPot();
+      bank += wonMoney;
+      gameMessage = 'You won £' + wonMoney.toString();
+    } else {
+      int lostMoney = pot;
+      emptyPot();
+      gameMessage =
+          'Dealer: ' +
+          dealerTotal.toInt().toString() +
+          '\n' +
+          'You lost £' +
+          lostMoney.toString();
+    }
+  }
+
+  bool isBlackjack() {
+    if (playerTotal == 21 && playersCards.length == 2) {
+      return true;
+    }
+    return false;
   }
 }
 

@@ -26,10 +26,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
-  bool gameActive = false;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () => {
+              setState(() {
+                gameLogic.resetGame();
+              }),
+            },
+            icon: Icon(Icons.refresh, size: 40),
+            padding: EdgeInsets.symmetric(horizontal: 30),
+          ),
+        ],
         title: Column(
           children: [
             Text(
@@ -51,31 +61,36 @@ class _HomePageState extends State<HomePage> {
                 GestureDetector(
                   child: CustomChip(chipColor: Colors.grey, chipValue: 1),
                   onTap: () => {
-                    if (!gameActive) {setState(() => gameLogic.addToPot(1))},
+                    if (!gameLogic.gameActive)
+                      {setState(() => gameLogic.addToPot(1))},
                   },
                 ),
                 GestureDetector(
                   child: CustomChip(chipColor: Colors.red, chipValue: 2),
                   onTap: () => {
-                    if (!gameActive) {setState(() => gameLogic.addToPot(2))},
+                    if (!gameLogic.gameActive)
+                      {setState(() => gameLogic.addToPot(2))},
                   },
                 ),
                 GestureDetector(
                   child: CustomChip(chipColor: Colors.purple, chipValue: 5),
                   onTap: () => {
-                    if (!gameActive) {setState(() => gameLogic.addToPot(5))},
+                    if (!gameLogic.gameActive)
+                      {setState(() => gameLogic.addToPot(5))},
                   },
                 ),
                 GestureDetector(
                   child: CustomChip(chipColor: Colors.blue, chipValue: 10),
                   onTap: () => {
-                    if (!gameActive) {setState(() => gameLogic.addToPot(10))},
+                    if (!gameLogic.gameActive)
+                      {setState(() => gameLogic.addToPot(10))},
                   },
                 ),
                 GestureDetector(
                   child: CustomChip(chipColor: Colors.black, chipValue: 20),
                   onTap: () => {
-                    if (!gameActive) {setState(() => gameLogic.addToPot(20))},
+                    if (!gameLogic.gameActive)
+                      {setState(() => gameLogic.addToPot(20))},
                   },
                 ),
               ],
@@ -84,24 +99,22 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: gameLogic.potEmpty() || gameActive
+                  onPressed: gameLogic.potEmpty() || gameLogic.gameActive
                       ? null
                       : () {
                           setState(() {
-                            gameLogic.setupGame();
-                            gameActive = true;
+                            gameLogic.bet();
                           });
                         },
-                  child: Text('Draw'),
+                  child: Text('Bet'),
                 ),
                 ElevatedButton(
-                  onPressed: gameLogic.isPlayerBust() || !gameActive
+                  onPressed: !gameLogic.gameActive
                       ? null
                       : () {
                           setState(() {
-                            gameLogic.dealPlayerCard();
-                            if (gameLogic.isPlayerBust()) {
-                              gameLogic.emptyPot();
+                            gameLogic.hit();
+                            if (!gameLogic.gameActive) {
                               showModalBottomSheet(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -110,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                                     width: double.infinity,
                                     child: Center(
                                       child: Text(
-                                        'Bust!',
+                                        gameLogic.gameMessage,
                                         style: TextStyle(fontSize: 40),
                                       ),
                                     ),
@@ -120,50 +133,29 @@ class _HomePageState extends State<HomePage> {
                             }
                           });
                         },
-                  child: Text('Draw Card'),
+                  child: Text('Hit'),
                 ),
                 ElevatedButton(
-                  onPressed: gameLogic.isPlayerBust() || !gameActive
+                  onPressed: !gameLogic.gameActive
                       ? null
                       : () {
-                          gameActive = false;
                           setState(() {
-                            gameLogic.dealerTurn();
-                            if (gameLogic.didPlayerWin()) {
-                              gameLogic.addPotToBankX2();
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return SizedBox(
-                                    height: 150,
-                                    width: double.infinity,
-                                    child: Center(
-                                      child: Text(
-                                        'You WIN!',
-                                        style: TextStyle(fontSize: 40),
-                                      ),
+                            gameLogic.stay();
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SizedBox(
+                                  height: 150,
+                                  width: double.infinity,
+                                  child: Center(
+                                    child: Text(
+                                      gameLogic.gameMessage,
+                                      style: TextStyle(fontSize: 40),
                                     ),
-                                  );
-                                },
-                              );
-                            } else {
-                              gameLogic.emptyPot();
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return SizedBox(
-                                    height: 150,
-                                    width: double.infinity,
-                                    child: Center(
-                                      child: Text(
-                                        'You Lost',
-                                        style: TextStyle(fontSize: 40),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
+                                  ),
+                                );
+                              },
+                            );
                           });
                         },
                   child: Text('Stay'),
